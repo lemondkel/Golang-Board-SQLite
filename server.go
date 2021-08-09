@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"github.com/go-martini/martini"
+	"net/http"
 )
 
 func main() {
@@ -10,7 +11,10 @@ func main() {
 	m := martini.Classic()
 	m.Map(db)
 	m.Get("/", func() string {
-		return "Hello world!"
+		return "index"
 	})
+	assets := martini.Static("assets", martini.StaticOptions{Fallback: "/error.html", Exclude: "/api/v"})
+	m.Use(martini.Static("assets"))
+	m.NotFound(assets, http.NotFound)
 	m.Run()
 }
